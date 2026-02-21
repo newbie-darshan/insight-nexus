@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block title %}New Post — Insight Nexus{% endblock %}
+
+{% block head %}
+<!-- Quill Rich Text Editor -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+
+<section class="admin-section">
+  <div class="container">
+
+    <div class="admin-header">
+      <div>
+        <h1>New Blog Post</h1>
+        <p>Write and publish your article</p>
+      </div>
+      <a href="{{ url_for('admin') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="post-form" id="postForm">
+
+      <div class="form-row">
+        <div class="form-group form-group-lg">
+          <label>Title <span class="required">*</span></label>
+          <input type="text" name="title" placeholder="Enter post title…" required/>
+        </div>
+        <div class="form-group">
+          <label>Category <span class="required">*</span></label>
+          <select name="category" required>
+            <option value="">Select category…</option>
+            <option>Finance</option>
+            <option>Cryptocurrency</option>
+            <option>Stock Market</option>
+            <option>Geopolitics</option>
+            <option>Health</option>
+            <option>Skincare</option>
+            <option>Wellness</option>
+            <option>Lifestyle</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Excerpt / Summary <span class="required">*</span></label>
+        <textarea name="excerpt" rows="2" placeholder="Short description shown on the blog card…" required></textarea>
+      </div>
+
+      <!-- IMAGE OPTIONS -->
+      <div class="form-group">
+        <label>Cover Image</label>
+        <div class="image-options">
+          <div class="image-tab active" data-tab="upload" onclick="switchImageTab('upload')">
+            <i class="fas fa-upload"></i> Upload from phone
+          </div>
+          <div class="image-tab" data-tab="url" onclick="switchImageTab('url')">
+            <i class="fas fa-link"></i> Paste URL
+          </div>
+        </div>
+        <div id="tab-upload" class="image-tab-content">
+          <input type="file" name="image_file" accept="image/*" class="file-input" id="imageFile"/>
+          <label for="imageFile" class="file-label">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Tap to choose image</span>
+          </label>
+          <div id="imagePreview" class="image-preview" style="display:none">
+            <img id="previewImg" src="" alt="Preview"/>
+          </div>
+        </div>
+        <div id="tab-url" class="image-tab-content" style="display:none">
+          <input type="text" name="image_url" id="imageUrl" placeholder="https://example.com/image.jpg"/>
+          <div id="urlPreview" class="image-preview" style="display:none">
+            <img id="urlPreviewImg" src="" alt="Preview"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- RICH TEXT EDITOR -->
+      <div class="form-group">
+        <label>Content <span class="required">*</span></label>
+        <div id="quill-editor"></div>
+        <input type="hidden" name="content" id="contentInput"/>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary btn-lg" onclick="submitForm(event)">
+          <i class="fas fa-paper-plane"></i> Publish Post
+        </button>
+        <a href="{{ url_for('admin') }}" class="btn-secondary btn-lg">Cancel</a>
+      </div>
+
+    </form>
+
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
+<script>
+  // Quill editor
+  const quill = new Quill('#quill-editor', {
+    theme: 'snow',
+    placeholder: 'Write your blog post here…',
+    modules: {
+      toolbar: [
+        [{ header: [2, 3, 4, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['blockquote', 'code-block'],
+        ['link'],
+        ['clean']
+      ]
+    }
+  });
+
+  function submitForm(e) {
+    document.getElementById('contentInput').value = quill.root.innerHTML;
+    const content = quill.getText().trim();
+    if (!content) {
+      e.preventDefault();
+      alert('Please write some content.');
+    }
+  }
+
+  // Image tab switching
+  function switchImageTab(tab) {
+    document.querySelectorAll('.image-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.image-tab-content').forEach(t => t.style.display = 'none');
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    document.getElementById(`tab-${tab}`).style.display = 'block';
+  }
+
+  // File upload preview
+  document.getElementById('imageFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById('previewImg').src = ev.target.result;
+        document.getElementById('imagePreview').style.display = 'block';
+        document.querySelector('.file-label span').textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // URL preview
+  document.getElementById('imageUrl').addEventListener('input', function() {
+    const url = this.value.trim();
+    if (url) {
+      document.getElementById('urlPreviewImg').src = url;
+      document.getElementById('urlPreview').style.display = 'block';
+    } else {
+      document.getElementById('urlPreview').style.display = 'none';
+    }
+  });
+</script>
+
+{% endblock %}

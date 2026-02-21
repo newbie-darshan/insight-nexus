@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Blog — Insight Nexus{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <h1 class="page-title">The Blog</h1>
+    <p class="page-sub">All articles, insights &amp; analysis</p>
+  </div>
+</section>
+
+<section class="blog-section">
+  <div class="container">
+
+    <!-- Category filter -->
+    <div class="category-pills" style="margin-bottom:2.5rem">
+      {% for cat in categories %}
+        <a href="{{ url_for('blog') }}?category={{ cat }}"
+           class="pill {% if selected_cat == cat %}active{% endif %}">{{ cat }}</a>
+      {% endfor %}
+    </div>
+
+    {% if posts %}
+      <div class="blog-grid">
+        {% for post in posts %}
+          <article class="blog-card" style="animation-delay: {{ loop.index0 * 0.08 }}s">
+            <a href="{{ url_for('post', post_id=post['id']) }}" class="card-image-wrap">
+              {% if post['image_url'] %}
+                <img src="{{ post['image_url'] }}" alt="{{ post['title'] }}" class="card-img"/>
+              {% else %}
+                <div class="card-img-placeholder"><i class="fas fa-newspaper"></i></div>
+              {% endif %}
+              <span class="card-category">{{ post['category'] }}</span>
+            </a>
+            <div class="card-body">
+              <h2 class="card-title">
+                <a href="{{ url_for('post', post_id=post['id']) }}">{{ post['title'] }}</a>
+              </h2>
+              <p class="card-excerpt">{{ post['excerpt'] }}</p>
+              <div class="card-meta">
+                <span><i class="far fa-calendar-alt"></i> {{ post['created'] }}</span>
+                <a href="{{ url_for('post', post_id=post['id']) }}" class="read-more">Read →</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-pen-nib"></i>
+        <p>No posts yet in this category.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

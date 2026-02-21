@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Sign In — Insight Nexus{% endblock %}
+
+{% block content %}
+
+<section class="auth-section">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span>Insight Nexus</span>
+    </div>
+    <h1>Admin Sign In</h1>
+    <p class="auth-sub">Enter your password to access the admin panel</p>
+
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter password" required autofocus/>
+      </div>
+      <button type="submit" class="btn-primary btn-full">Sign In</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

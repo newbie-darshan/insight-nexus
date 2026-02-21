@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Insight Nexus — Where Knowledge Meets Clarity{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-tag">Expert Analysis &amp; Insights</p>
+    <h1 class="hero-title">Where Knowledge<br><em>Meets Clarity</em></h1>
+    <p class="hero-sub">Finance · Crypto · Geopolitics · Health · Skincare</p>
+  </div>
+</section>
+
+<!-- SEARCH + FILTER -->
+<section class="search-section">
+  <div class="container">
+    <form method="GET" action="{{ url_for('home') }}" class="search-form">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" name="q" placeholder="Search posts, topics, keywords…" value="{{ q }}"/>
+        <button type="submit">Search</button>
+      </div>
+    </form>
+    <div class="category-pills">
+      {% for cat in categories %}
+        <a href="{{ url_for('home') }}?category={{ cat }}{% if q %}&q={{ q }}{% endif %}"
+           class="pill {% if selected_cat == cat %}active{% endif %}">{{ cat }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- BLOG GRID -->
+<section class="blog-section">
+  <div class="container">
+    {% if q or selected_cat != 'All' %}
+      <p class="results-info">
+        {% if posts %}{{ posts|length }} result{% if posts|length != 1 %}s{% endif %}{% if q %} for "<strong>{{ q }}</strong>"{% endif %}{% else %}No results found{% if q %} for "<strong>{{ q }}</strong>"{% endif %}{% endif %}
+      </p>
+    {% endif %}
+
+    {% if posts %}
+      <div class="blog-grid">
+        {% for post in posts %}
+          <article class="blog-card" style="animation-delay: {{ loop.index0 * 0.08 }}s">
+            <a href="{{ url_for('post', post_id=post['id']) }}" class="card-image-wrap">
+              {% if post['image_url'] %}
+                <img src="{{ post['image_url'] }}" alt="{{ post['title'] }}" class="card-img"/>
+              {% else %}
+                <div class="card-img-placeholder"><i class="fas fa-newspaper"></i></div>
+              {% endif %}
+              <span class="card-category">{{ post['category'] }}</span>
+            </a>
+            <div class="card-body">
+              <h2 class="card-title">
+                <a href="{{ url_for('post', post_id=post['id']) }}">{{ post['title'] }}</a>
+              </h2>
+              <p class="card-excerpt">{{ post['excerpt'] }}</p>
+              <div class="card-meta">
+                <span><i class="far fa-calendar-alt"></i> {{ post['created'] }}</span>
+                <a href="{{ url_for('post', post_id=post['id']) }}" class="read-more">Read →</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>No posts found. Try a different keyword.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-box">
+      <h3>Stay in the Loop</h3>
+      <p>Get the latest insights delivered directly to your inbox</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="your@email.com" required/>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

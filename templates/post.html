@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}{{ post['title'] }} — Insight Nexus{% endblock %}
+
+{% block content %}
+
+<article class="post-detail">
+  <div class="container-narrow">
+
+    <!-- Back -->
+    <a href="{{ url_for('blog') }}" class="back-link"><i class="fas fa-arrow-left"></i> All Posts</a>
+
+    <!-- Header -->
+    <header class="post-header">
+      <span class="post-category-tag">{{ post['category'] }}</span>
+      <h1 class="post-title">{{ post['title'] }}</h1>
+      <div class="post-meta">
+        <span><i class="far fa-calendar-alt"></i> {{ post['created'] }}</span>
+        <span><i class="far fa-user"></i> {{ post['author'] }}</span>
+      </div>
+    </header>
+
+    <!-- Image -->
+    {% if post['image_url'] %}
+      <div class="post-image-wrap">
+        <img src="{{ post['image_url'] }}" alt="{{ post['title'] }}" class="post-img"/>
+      </div>
+    {% endif %}
+
+    <!-- Content -->
+    <div class="post-content">
+      {{ post['content'] | safe }}
+    </div>
+
+    <!-- Share -->
+    <div class="share-bar">
+      <span>Share:</span>
+      <a href="https://twitter.com/intent/tweet?text={{ post['title'] | urlencode }}&url={{ request.url | urlencode }}"
+         target="_blank" class="share-btn"><i class="fab fa-twitter"></i> Twitter</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url | urlencode }}"
+         target="_blank" class="share-btn"><i class="fab fa-facebook"></i> Facebook</a>
+      <a href="whatsapp://send?text={{ (post['title'] ~ ' ' ~ request.url) | urlencode }}"
+         class="share-btn"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+
+    <!-- Comments -->
+    <section class="comments-section" id="comments">
+      <h2 class="comments-title">Comments <span class="comment-count">({{ comments|length }})</span></h2>
+
+      <!-- Add Comment Form -->
+      <form method="POST" action="{{ url_for('add_comment', post_id=post['id']) }}" class="comment-form">
+        <input type="text"     name="author" placeholder="Your name *"    required/>
+        <textarea              name="text"   placeholder="Your comment *" required></textarea>
+        <button type="submit" class="btn-primary">Post Comment</button>
+      </form>
+
+      <!-- Comment List -->
+      {% if comments %}
+        <div class="comment-list">
+          {% for c in comments %}
+            <div class="comment-item">
+              <div class="comment-header">
+                <span class="comment-author">{{ c['author'] }}</span>
+                <span class="comment-date">{{ c['created'] }}</span>
+              </div>
+              <p class="comment-text">{{ c['text'] }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="no-comments">Be the first to comment.</p>
+      {% endif %}
+    </section>
+
+  </div>
+</article>
+
+{% endblock %}
