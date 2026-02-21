@@ -8,11 +8,12 @@ app = Flask(__name__)
 app.secret_key = 'insight-nexus-secret-2026'
 
 # ── CONFIG ──────────────────────────────────────────────
-ADMIN_PASSWORD = 'Renewal3-Manhole3-Onscreen3-Immunity0-Backstab4'          # ← Change this password
+ADMIN_PASSWORD = 'Renewal3-Manhole3-Onscreen3-Immunity0-Backstab4'
 UPLOAD_FOLDER  = 'static/uploads'
 ALLOWED_EXTS   = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 DB_PATH        = 'blog.db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ── DATABASE ─────────────────────────────────────────────
 def get_db():
@@ -174,6 +175,7 @@ def new_post():
         if file and file.filename and allowed_file(file.filename):
             fname   = secure_filename(file.filename)
             fname   = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{fname}"
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
             img_url = url_for('static', filename=f'uploads/{fname}')
 
@@ -206,6 +208,5 @@ def delete_post(post_id):
 
 
 if __name__ == '__main__':
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
