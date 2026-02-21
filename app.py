@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'insight-nexus-secret-2026'
 
 # ── CONFIG ──────────────────────────────────────────────
-ADMIN_PASSWORD = 'admin123'          # ← Change this password
+ADMIN_PASSWORD = 'Renewal3-Manhole3-Onscreen3-Immunity0-Backstab4'          # ← Change this password
 UPLOAD_FOLDER  = 'static/uploads'
 ALLOWED_EXTS   = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 DB_PATH        = 'blog.db'
